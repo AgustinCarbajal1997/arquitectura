@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 const { Schema, model } = mongoose;
 const bcrypt = require("bcrypt");
 const userSchema = new Schema({
@@ -7,6 +8,11 @@ const userSchema = new Schema({
     index: true,
     required: true,
   },
+  image: {
+    type: String,
+    required: true,
+  },
+  public_id: String,
   name: {
     type: String,
     required: true,
@@ -69,10 +75,11 @@ userSchema.set("toJSON", {
   transform: (document, returnObject) => {
     (returnObject.id = returnObject._id),
       delete returnObject._id,
+      delete returnObject.password,
       delete returnObject.__v;
   },
 });
-
+userSchema.plugin(mongoosePaginate);
 const User = new model("user", userSchema);
 
 module.exports = User;
